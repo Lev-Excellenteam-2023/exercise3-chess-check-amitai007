@@ -4,8 +4,12 @@
 #
 # Note: move log class inspired by Eddie Sharick
 #
+import logging
 from Piece import Rook, Knight, Bishop, Queen, King, Pawn
 from enums import Player
+
+# Get the logger for the current module
+logger = logging.getLogger(__name__)
 
 '''
 r \ c     0           1           2           3           4           5           6           7 
@@ -143,6 +147,10 @@ class game_state:
 
             # immediate check
             if checking_pieces:
+                
+                self._num_checks += 1  # Increment counter for number of checks
+                logger.info(f"Number of checks: {self._num_checks}")  # Log current count of checks
+                
                 for move in initial_valid_piece_moves:
                     can_move = True
                     for piece in checking_pieces:
@@ -467,7 +475,8 @@ class game_state:
                 self.white_turn = not self.white_turn
 
             else:
-                pass
+                logger.warning("Invalid move")
+                
 
     def undo_move(self):
         if self.move_log:
