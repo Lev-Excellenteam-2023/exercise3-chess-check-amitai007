@@ -44,6 +44,7 @@ class game_state:
         self.stalemate = False
 
         self._is_check = False
+        self._num_checks = 0  # Add counter variable to keep track of number of checks
         self._white_king_location = [0, 3]
         self._black_king_location = [7, 3]
 
@@ -229,9 +230,11 @@ class game_state:
         all_black_moves = self.get_all_legal_moves(Player.PLAYER_2)
         if self._is_check and self.whose_turn() and not all_white_moves:
             print("white lost")
+            logger.info("White lost")
             return 0
         elif self._is_check and not self.whose_turn() and not all_black_moves:
             print("black lost")
+            logger.info("black lost")
             return 1
         elif not all_white_moves and not all_black_moves:
             return 2
