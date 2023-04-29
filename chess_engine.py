@@ -147,11 +147,7 @@ class game_state:
             initial_valid_piece_moves = moving_piece.get_valid_piece_moves(self)
 
             # immediate check
-            if checking_pieces:
-                
-                self._num_checks += 1  # Increment counter for number of checks
-                logger.info(f"Number of checks: {self._num_checks}")  # Log current count of checks
-                
+            if checking_pieces:              
                 for move in initial_valid_piece_moves:
                     can_move = True
                     for piece in checking_pieces:
@@ -866,6 +862,8 @@ class game_state:
                     # self._is_check = True
                     _checks.append((king_location_row + row_change[i], king_location_col + col_change[i]))
         # print([_checks, _pins, _pins_check])
+        self._num_checks += 1  # Increment counter for number of checks
+        logger.info(f"Number of checks in the game: {self._num_checks}")  # Log current count of checks
         return [_pins_check, _pins, _pins_check]
 
 
