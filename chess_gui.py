@@ -6,10 +6,15 @@
 # fit in with the rest of the project.
 #
 import chess_engine
+import logging
+from logger_files import log_file
 import pygame as py
 
 import ai_engine
 from enums import Player
+
+# Get the logger for the current module
+logger = logging.getLogger(__name__)
 
 """Variables"""
 WIDTH = HEIGHT = 512  # width and height of the chess board
@@ -107,6 +112,9 @@ def main():
                 print("Enter 1 or 2.\n")
         except ValueError:
             print("Enter 1 or 2.")
+    
+    logger.info("Number of players: %s", number_of_players)
+    logger.info("Human player color: %s", human_player)           
 
     py.init()
     screen = py.display.set_mode((WIDTH, HEIGHT))
@@ -124,7 +132,7 @@ def main():
     if human_player is 'b':
         ai_move = ai.minimax_black(game_state, 3, -100000, 100000, True, Player.PLAYER_1)
         game_state.move_piece(ai_move[0], ai_move[1], True)
-
+        
     while running:
         for e in py.event.get():
             if e.type == py.QUIT:
@@ -154,17 +162,23 @@ def main():
                             valid_moves = []
 
                             if human_player is 'w':
+                                logger.info("white move first")
                                 ai_move = ai.minimax_white(game_state, 3, -100000, 100000, True, Player.PLAYER_2)
                                 game_state.move_piece(ai_move[0], ai_move[1], True)
+                                logger.info("AI move: %s -> %s", ai_move[0], ai_move[1])
+                                
                             elif human_player is 'b':
+                                logger.info("white move first")
                                 ai_move = ai.minimax_black(game_state, 3, -100000, 100000, True, Player.PLAYER_1)
                                 game_state.move_piece(ai_move[0], ai_move[1], True)
+                                logger.info("AI move: %s -> %s", ai_move[0], ai_move[1])
                     else:
                         valid_moves = game_state.get_valid_moves((row, col))
                         if valid_moves is None:
                             valid_moves = []
             elif e.type == py.KEYDOWN:
                 if e.key == py.K_r:
+                     logger.info("Game reset.")
                     game_over = False
                     game_state = chess_engine.game_state()
                     valid_moves = []
@@ -172,6 +186,7 @@ def main():
                     player_clicks = []
                     valid_moves = []
                 elif e.key == py.K_u:
+                    logger.info("Move undo.")
                     game_state.undo_move()
                     print(len(game_state.move_log))
 
@@ -181,12 +196,15 @@ def main():
         if endgame == 0:
             game_over = True
             draw_text(screen, "Black wins.")
+            logger.info("Black wins.")
         elif endgame == 1:
             game_over = True
             draw_text(screen, "White wins.")
+            logger.info("White wins.")
         elif endgame == 2:
             game_over = True
             draw_text(screen, "Stalemate.")
+            logger.info("Stalemate.")
 
         clock.tick(MAX_FPS)
         py.display.flip()

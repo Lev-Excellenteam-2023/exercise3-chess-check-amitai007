@@ -4,8 +4,12 @@
 #
 # Note: move log class inspired by Eddie Sharick
 #
+import logging
 from Piece import Rook, Knight, Bishop, Queen, King, Pawn
 from enums import Player
+
+# Get the logger for the current module
+logger = logging.getLogger(__name__)
 
 '''
 r \ c     0           1           2           3           4           5           6           7 
@@ -40,6 +44,7 @@ class game_state:
         self.stalemate = False
 
         self._is_check = False
+        self._num_checks = 0  # Add counter variable to keep track of number of checks
         self._white_king_location = [0, 3]
         self._black_king_location = [7, 3]
 
@@ -142,7 +147,7 @@ class game_state:
             initial_valid_piece_moves = moving_piece.get_valid_piece_moves(self)
 
             # immediate check
-            if checking_pieces:
+            if checking_pieces:              
                 for move in initial_valid_piece_moves:
                     can_move = True
                     for piece in checking_pieces:
@@ -221,9 +226,11 @@ class game_state:
         all_black_moves = self.get_all_legal_moves(Player.PLAYER_2)
         if self._is_check and self.whose_turn() and not all_white_moves:
             print("white lost")
+            logger.info("White lost")
             return 0
         elif self._is_check and not self.whose_turn() and not all_black_moves:
             print("black lost")
+            logger.info("black lost")
             return 1
         elif not all_white_moves and not all_black_moves:
             return 2
@@ -467,7 +474,8 @@ class game_state:
                 self.white_turn = not self.white_turn
 
             else:
-                pass
+                logger.warning("Invalid move")
+                
 
     def undo_move(self):
         if self.move_log:
@@ -854,6 +862,8 @@ class game_state:
                     # self._is_check = True
                     _checks.append((king_location_row + row_change[i], king_location_col + col_change[i]))
         # print([_checks, _pins, _pins_check])
+        self._num_checks += 1  # Increment counter for number of checks
+        logger.info(f"Number of checks in the game: {self._num_checks}")  # Log current count of checks
         return [_pins_check, _pins, _pins_check]
 
 
