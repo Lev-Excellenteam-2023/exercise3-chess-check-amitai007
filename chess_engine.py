@@ -296,14 +296,15 @@ class game_state:
 
     # have to fix en passant for ai
     def can_en_passant(self, current_square_row, current_square_col):
+         # Check if en passant is possible and if the current square is the en passant square
+        if self.can_en_passant_bool and self._en_passant_square[0] == current_square_row and \
+                abs(self._en_passant_square[1] - current_square_col) == 1:
+            return True
+        # If en passant is not possible or the current square is not the en passant square, return False
         return False
-        # if is_ai:
-        #     return False
-        # else:
-        #     return self.can_en_passant_bool and current_square_row == self.previous_piece_en_passant()[0] \
-        #            and abs(current_square_col - self.previous_piece_en_passant()[1]) == 1
 
     def previous_piece_en_passant(self):
+        # Return the coordinates of the previous piece that made a move eligible for en passant
         return self._en_passant_previous
 
     # Move a piece
